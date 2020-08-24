@@ -6,6 +6,7 @@ import {isUserAuthenticatedAsync} from './redux/user/user.action';
 import {connect} from 'react-redux';
 import { selectCurrentUser } from './redux/user/user.selector';
 import Spinner, {} from './components/spinner/spinner.component';
+import ErrorBoundary from './components/error-boundary/error-boundary.component';
 
 const HomePage = lazy(() => import('./pages/homepage/homepage.component'));
 const ShopPage = lazy(() => import('./pages/shop/shop.component'));
@@ -20,23 +21,25 @@ const App = (props) => {
 
   return (
     <div>
-      <Header/>
-      <Switch>
-        <Suspense fallback={<Spinner/>}>
-          <Route exact path="/" component={HomePage} />
-          <Route path="/shop" component={ShopPage} />
-          <Route exact path="/checkout" component={Checkoutpage} />
-          <Route exact path="/signin" render={
-            () => props.currentUser ?
-              (
-                <Redirect to= '/' />
-              ) : (
-                <SignInAndSignUpPage/>
-              )
-            }
-          />
-        </Suspense>
-      </Switch>
+      <ErrorBoundary>
+        <Header/>
+        <Switch>
+          <Suspense fallback={<Spinner/>}>
+            <Route exact path="/" component={HomePage} />
+            <Route path="/shop" component={ShopPage} />
+            <Route exact path="/checkout" component={Checkoutpage} />
+            <Route exact path="/signin" render={
+              () => props.currentUser ?
+                (
+                  <Redirect to= '/' />
+                ) : (
+                  <SignInAndSignUpPage/>
+                )
+              }
+            />
+          </Suspense>
+        </Switch>
+      </ErrorBoundary>
     </div>
   );
 }
